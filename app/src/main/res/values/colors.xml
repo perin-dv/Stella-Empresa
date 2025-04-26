@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="pele">#FFBB88</color>
+    <color name="vermelho">#900026</color>
+    <color name="gourmet_dourado">#D4AF37</color> <!-- dourado elegante -->
+    <color name="branco_suave">#F5F5F5</color>
+    <color name="fundo_bottom_nav">#330000</color> <!-- vinho bem escuro -->
+
+</resources>

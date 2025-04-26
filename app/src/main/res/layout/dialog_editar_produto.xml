@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_editar_produto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imgProdutoDialog"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_sem_imagem"
+        android:background="@drawable/bg_circle_gourmet"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/editNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do Produto"
+        android:inputType="textPersonName"
+        android:layout_marginTop="12dp" />
+
+    <EditText
+        android:id="@+id/editPreco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Preço"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/editObservacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Observação"
+        android:inputType="textMultiLine"
+        android:layout_marginTop="8dp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/spinnerCategoriaDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Categoria"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btnSalvar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Salvar"
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/btnDeletar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:enabled="true"
+        android:text="Excluir Produto"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

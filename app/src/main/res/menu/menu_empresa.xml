@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/novo_produtos"
+        android:icon="@drawable/ic_anexar"
+        android:title="Novos Produto"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/text_configuracpes"
+        android:icon="@drawable/ic_anexar"
+        android:title="@string/configura_es"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/text_sair"
+        android:icon="@drawable/ic_anexar"
+        android:title="Sair"
+        app:showAsAction="never" />
+</menu>

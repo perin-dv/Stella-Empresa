@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="18dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Imagem do produto -->
+        <ImageView
+            android:id="@+id/imgProduto"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/bg_img_rounded" />
+
+        <!-- Nome do produto -->
+        <TextView
+            android:id="@+id/txtNomeProduto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Pizza Margherita"
+            android:textColor="@color/vermelho"
+            android:textSize="18sp"
+            android:fontFamily="@font/montserrat_subrayada_bold"
+            app:layout_constraintStart_toEndOf="@id/imgProduto"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnEditar" />
+
+        <!-- Preço -->
+        <TextView
+            android:id="@+id/txtPrecoProduto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="R$ 39,90"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_alternates_bold"
+            app:layout_constraintTop_toBottomOf="@id/txtNomeProduto"
+            app:layout_constraintStart_toStartOf="@id/txtNomeProduto"
+            app:layout_constraintEnd_toEndOf="@id/txtNomeProduto" />
+
+        <!-- Botão editar -->
+        <ImageButton
+            android:id="@+id/btnEditar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_editar"
+            android:contentDescription="Editar"
+            app:tint="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toStartOf="@id/btnExcluir"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Botão excluir -->
+        <ImageButton
+            android:id="@+id/btnExcluir"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_excluir"
+            android:contentDescription="Excluir"
+            app:tint="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

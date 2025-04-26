@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/imgProduto"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/pr_via_da_imagem_do_produto"
+            android:src="@drawable/pizza_placeholder"
+            android:background="@drawable/bg_img_rounded" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="12dp"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/txtNomeProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pizza Gourmet"
+                android:textColor="#3E2723"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtDescricaoProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Queijo brie, parma, mel trufado"
+                android:textColor="#5D4037"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtPrecoProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 49,90"
+                android:textColor="#BF360C"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

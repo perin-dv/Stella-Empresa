@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">STELLA D ITALIA EMPRESA</string>
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="configura_es">Configurações</string>
+    <string name="salvar">Salvar</string>
+    <string name="empresa">Empresa</string>
+    <string name="categoria">Categoria</string>
+    <string name="tempo_de_entrega">Tempo de entrega</string>
+    <string name="taxa_de_entrega">Taxa de entrega</string>
+    <string name="nome_produto">Nome Produto</string>
+    <string name="preco">Preço</string>
+    <string name="descricao">Descrição</string>
+    <string name="nome_do_produto">Nome do Produto</string>
+    <string name="pre_o">Preço</string>
+    <string name="descri_o_do_produto">Descrição do Produto</string>
+    <string name="selecionar_imagem">Selecionar Imagem</string>
+    <string name="pr_via_da_imagem_do_produto">Prévia da imagem do produto</string>
+    <string name="salvar_produto">Salvar Produto</string>
+    <string name="novo_produto">Novo Produto</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="in_cio">Início</string>
+    <string name="pedidos">Pedidos</string>
+    <string name="configuracao">configuração</string>
+    <string name="imagem_do_produto">Imagem do Produto</string>
+    <string name="card_pio">Cardápio</string>
+    <string name="cardapio">🍕 Cardápio</string>
+</resources>

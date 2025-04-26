@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/in_cio" />
+
+    <item
+        android:id="@+id/navigation_Pedidos"
+        android:icon="@drawable/ic_lista"
+        android:title="@string/pedidos" />
+
+    <item
+        android:id="@+id/navigation_cardapio"
+        android:icon="@drawable/ic_cardapio"
+        android:title="@string/card_pio" />
+    <item
+        android:id="@+id/navigation_configuracao"
+        android:icon="@drawable/ic_configuracao"
+        android:title="@string/configuracao" />
+
+
+
+</menu>

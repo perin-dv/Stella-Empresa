@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vermelho"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tvNomeCliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cliente: João Silva"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:textColor="#FFFFFF"
+            android:paddingBottom="12dp"
+            android:letterSpacing="0.02" />
+
+        <TextView
+            android:id="@+id/tvTelefone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Telefone: (11) 99999-9999"
+            android:textColor="#FFEAEA"
+            android:textSize="17sp"
+            android:paddingBottom="6dp" />
+
+        <TextView
+            android:id="@+id/tvEndereco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Endereço: Rua Exemplo, 123"
+            android:textColor="#FFEAEA"
+            android:textSize="17sp"
+            android:paddingBottom="6dp" />
+
+        <TextView
+            android:id="@+id/tvPagamento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pagamento: PIX"
+            android:textColor="#FFEAEA"
+            android:textSize="17sp"
+            android:paddingBottom="6dp" />
+
+        <TextView
+            android:id="@+id/tvObservacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observação: Sem cebola"
+            android:textColor="#FFEAEA"
+            android:textSize="17sp"
+            android:paddingBottom="6dp" />
+
+        <TextView
+            android:id="@+id/tvProdutos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Produtos: 1x Pepperoni, 1x Margarita"
+            android:textColor="#FFEAEA"
+            android:textSize="17sp"
+            android:paddingBottom="6dp" />
+
+        <TextView
+            android:id="@+id/totalPedido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: R$ 79,90"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:paddingTop="12dp"
+            android:paddingBottom="20dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#AAFFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnConfirmarPedido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirmar Pedido"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textColor="#4B0C18"
+            android:backgroundTint="#FFFFFF"
+            android:elevation="6dp"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</ScrollView>

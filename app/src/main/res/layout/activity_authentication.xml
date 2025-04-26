@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#900026"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <ImageView
+        android:id="@+id/imageView_logopreta"
+        android:layout_width="330dp"
+        android:layout_height="330dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/modelo_4" />
+
+
+    <EditText
+        android:id="@+id/edittext_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_edit_text"
+        android:ems="10"
+        android:hint="@string/email"
+        android:textColorHint="#4A4949"
+        android:inputType="text"
+        android:padding="16dp"
+        android:textColor="@color/black"
+        tools:ignore="TextFields" />
+
+    <EditText
+        android:id="@+id/editText_Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_edit_text"
+        android:ems="10"
+        android:textColorHint="#4A4949"
+        android:hint="@string/senha"
+        android:textColor="@color/black"
+        android:inputType="textPassword"
+        android:padding="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logar"
+            android:textColor="@color/white" />
+
+        <Switch
+            android:id="@+id/switch_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            android:id="@+id/textView_cadasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cadastra-se"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_acesso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#D60033"
+        android:layout_marginTop="10dp"
+        android:padding="16dp"
+        android:text="Acessar"
+        android:textAllCaps="true"
+        android:textSize="15dp"
+        android:textStyle="bold"
+       />
+
+
+</LinearLayout>

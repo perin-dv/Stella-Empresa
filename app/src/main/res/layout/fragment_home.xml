@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/vermelho"
+    android:paddingBottom="80dp"
+    android:clipToPadding="false">
+
+
+    <!-- Conteúdo principal -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Logo da pizzaria -->
+        <ImageView
+            android:id="@+id/logoPizzaria"
+            android:layout_width="250dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Logo da Pizzaria"
+            android:src="@drawable/modelo_4" />
+
+        <!-- Alerta de novos pedidos -->
+        <LinearLayout
+            android:id="@+id/layoutAlertaPedido"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="12dp"
+            android:background="@drawable/alerta_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/ic_pedido_novo"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:text="Novo pedido recebido!"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Título do Cardápio -->
+        <TextView
+            android:id="@+id/txtTituloCardapio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/montserrat_alternates_bold"
+            android:text="@string/cardapio"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="32sp"
+            android:letterSpacing="0.05"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Lista de produtos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCardapio"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/vermelho">
+
+    <!-- AppBar com Toolbar personalizada -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/vermelho"
+            app:title="Configurações"
+            app:titleTextColor="@color/white"
+            style="@style/MeuToolbarStyle"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+    <!-- Layout principal -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="24dp">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="Logo"
+            android:src="@drawable/modelo_4_sem_fundo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Taxa de Entrega -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputTaxaEntrega"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Taxa de Entrega (R$)"
+            app:boxStrokeColor="#FFFFFF"
+            app:hintTextColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/logoImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTaxaEntrega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Tempo de Entrega -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputTempoEntrega"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Tempo de Entrega (minutos)"
+            app:boxStrokeColor="#FFFFFF"
+            app:hintTextColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/inputTaxaEntrega"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTempoEntrega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botão: Salvar Dados -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSalvarDados"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Salvar Dados"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#8A0E2D"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_save"
+            app:iconTint="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/inputTempoEntrega"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botão: Ver Vendas do Dia -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerVendas"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Ver Vendas do Dia"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#8A0E2D"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_chart"
+            app:iconTint="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/btnSalvarDados"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Botão: Promoções -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPromocoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Promoções"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#8A0E2D"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_local_offer"
+            app:iconTint="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/btnVerVendas"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Botão: Promoções -->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSair"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Sair"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#8A0E2D"
+            app:cornerRadius="24dp"
+            app:icon="@drawable/ic_exit"
+            app:iconTint="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/btnPromocoes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

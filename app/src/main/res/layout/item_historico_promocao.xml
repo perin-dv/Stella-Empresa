@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_marginHorizontal="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    android:background="@color/vermelho">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/txtTituloPromocao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Título da Promoção"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Imagem -->
+        <ImageView
+            android:id="@+id/imgPromocaoCard"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_below="@id/txtTituloPromocao"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop" />
+
+        <!-- Botão Excluir -->
+        <ImageButton
+            android:id="@+id/btnExcluirPromocao"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="Excluir promoção"
+            android:src="@drawable/ic_baseline_close_24"
+            app:tint="@color/vermelho" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

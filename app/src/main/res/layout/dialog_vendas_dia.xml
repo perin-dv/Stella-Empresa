@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/bg_dialog_gourmet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resumo do Dia"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/vermelho"
+        android:fontFamily="@font/montserrat_alternates_bold"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/txtTotalPedidos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pedidos: 0"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/txtEntregues"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Entregues: 0"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/txtCancelados"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancelados: 0"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/txtFaturamento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Faturamento: R$ 0,00"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/txtResumo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resumo inteligente..."
+        android:textSize="14sp"
+        android:textColor="#BBBBBB"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnFechar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fechar"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/vermelho"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Estilo para popup do menu (3 pontinhos) -->
+    <style name="MeuPopupMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:popupBackground">#FFFFFF</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <!-- Estilo para Toolbar com tema do menu popup -->
+    <style name="MeuToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:popupTheme">@style/MeuPopupMenuStyle</item>
+    </style>
+
+    <!-- Estilo padrão para botões -->
+    <style name="botaoPadrao" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">#990000</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+</resources>
+

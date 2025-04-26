@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vermelho"
+    android:fitsSystemWindows="true">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/vermelho"
+            app:title="Promoção"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Conteúdo -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <!-- Título da Promoção -->
+            <EditText
+                android:id="@+id/editTituloPromocao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Título da Promoção"
+                android:inputType="textCapWords"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white" />
+
+            <!-- Imagem -->
+            <ImageView
+                android:id="@+id/imgPromocao"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_sem_imagem"
+                android:background="@drawable/bg_dialog_gourmet"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Produtos -->
+            <EditText
+                android:id="@+id/editProdutos"
+                android:hint="Escolher até 4 produtos"
+                android:focusable="false"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white" />
+
+            <!-- Valor -->
+            <EditText
+                android:id="@+id/editValor"
+                android:hint="Valor da promoção"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white" />
+
+            <!-- Resumo da Promoção -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardResumoPromocao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:background="@drawable/bg_resumo_promocao"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center_horizontal">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieAnimacao"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/desconto_animado_lottie"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/txtResumoTitulo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resumo da Promoção"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/txtResumoConteudo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Você escolheu 3 produtos..."
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Observação -->
+            <EditText
+                android:id="@+id/editObservacao"
+                android:hint="Observação"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white" />
+
+            <!-- Análise -->
+            <TextView
+                android:id="@+id/txtAnalise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:alpha="0"
+                android:scaleX="0.8"
+                android:scaleY="0.8" />
+
+            <!-- Botão -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSalvarPromocao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Salvar Promoção"
+                android:textColor="@android:color/white"
+                app:cornerRadius="24dp"
+                app:backgroundTint="#8A0E2D" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
