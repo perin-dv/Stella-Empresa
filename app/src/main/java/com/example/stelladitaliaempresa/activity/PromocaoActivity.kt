@@ -52,7 +52,7 @@ class PromocaoActivity : BaseActivity() {
         }
 
         binding.btnSalvarPromocao.setOnClickListener {
-            salvarPromocaoManual()
+            confirmarSalvarPromocao()
         }
 
         binding.editValor.addTextChangedListener {
@@ -66,14 +66,9 @@ class PromocaoActivity : BaseActivity() {
 
     private fun selecionarProdutos() {
         lifecycleScope.launch {
-            val todos = withContext(Dispatchers.IO) {
-                dao.getTodos()
-            }
-
+            val todos = withContext(Dispatchers.IO) { dao.getTodos() }
             val nomes = todos.map { it.nome }.toTypedArray()
-            val selecionadosTemp = BooleanArray(nomes.size) { i ->
-                produtosSelecionados.contains(todos[i])
-            }
+            val selecionadosTemp = BooleanArray(nomes.size) { i -> produtosSelecionados.contains(todos[i]) }
 
             AlertDialog.Builder(this@PromocaoActivity)
                 .setTitle("Escolha até 4 produtos")
@@ -81,11 +76,7 @@ class PromocaoActivity : BaseActivity() {
                     if (isChecked) {
                         if (produtosSelecionados.size >= 4) {
                             (dialog as AlertDialog).listView.setItemChecked(which, false)
-                            Toast.makeText(
-                                this@PromocaoActivity,
-                                "Máximo de 4 produtos",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(this@PromocaoActivity, "Máximo de 4 produtos", Toast.LENGTH_SHORT).show()
                         } else {
                             produtosSelecionados.add(todos[which])
                         }
@@ -94,9 +85,7 @@ class PromocaoActivity : BaseActivity() {
                     }
                 }
                 .setPositiveButton("Confirmar") { _, _ ->
-                    binding.editProdutos.setText(produtosSelecionados.joinToString {
-                        it.nome ?: ""
-                    })
+                    binding.editProdutos.setText(produtosSelecionados.joinToString { it.nome ?: "" })
                     atualizarResumoDesconto()
                     animarAnalise("Selecione um valor para ver o desconto.")
                 }
@@ -144,49 +133,16 @@ class PromocaoActivity : BaseActivity() {
         }
     }
 
-    private fun salvarPromocao(promocao: PromocaoEntity) {
-        val dao = AppDatabase.getInstance(this).promocaoDao()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            dao.insert(promocao)
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    this@PromocaoActivity,
-                    "Promoção salva localmente",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                // Fecha a activity após salvar localmente
-                finish()
+    private fun confirmarSalvarPromocao() {
+        AlertDialog.Builder(this)
+            .setTitle("Salvar promoção")
+            .setMessage("Tem certeza que deseja salvar esta promoção?")
+            .setPositiveButton("Sim") { _, _ ->
+                salvarPromocaoManual()
             }
-        }
-
-        // Firebase
-              val idUsuarioFirebase = "7a3118oNdgcpmwSqrgyRTqBnFFx2"
-              val idPromocao = System.currentTimeMillis().toString()
-
-        val promocaoFirebase = PromocaoEntity(
-            id = idPromocao,
-            idUsuario = idUsuarioFirebase,
-            titulo = promocao.titulo,
-            observacao = promocao.observacao,
-            valor = promocao.valor,
-            imagemBase64 = promocao.imagemBase64,
-            produtos = promocao.produtos
-        )
-
-        val firebaseRef = FirebaseDatabase.getInstance()
-            .getReference("empresa")
-            .child(idUsuarioFirebase)
-            .child("promocoes")
-            .child(idPromocao)
-
-        firebaseRef.setValue(promocaoFirebase).addOnSuccessListener {
-            Log.d("SALVAR_PROMOCAO", "Promoção salva no Firebase com sucesso!")
-        }.addOnFailureListener { e ->
-            Log.e("SALVAR_PROMOCAO", "Erro ao salvar no Firebase: ${e.message}")
-        }
+            .setNegativeButton("Cancelar", null)
+            .setCancelable(true)
+            .show()
     }
 
     private fun salvarPromocaoManual() {
@@ -195,29 +151,47 @@ class PromocaoActivity : BaseActivity() {
         val preco = binding.editValor.text.toString().toDoubleOrNull()
 
         if (titulo.isEmpty() || observacao.isEmpty() || preco == null || imagemBase64 == null) {
-            Toast.makeText(
-                this,
-                "Preencha todos os dados e selecione a imagem!",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Preencha todos os dados e selecione a imagem!", Toast.LENGTH_SHORT).show()
             return
         }
 
         val promocao = PromocaoEntity(
             id = System.currentTimeMillis().toString(),
-            idUsuario = FirebaseDatabase.getInstance().toString(),
+            idUsuario = "7a3118oNdgcpmwSqrgyRTqBnFFx2",
             titulo = titulo,
             observacao = observacao,
             valor = preco,
             imagemBase64 = imagemBase64!!,
-            produtos = produtosSelecionados.map { it.id ?: UUID.randomUUID().toString() } // Se quiser atrelar
+            produtos = produtosSelecionados.map { it.id ?: UUID.randomUUID().toString() }
         )
 
         salvarPromocao(promocao)
     }
 
+    private fun salvarPromocao(promocao: PromocaoEntity) {
+        val dao = AppDatabase.getInstance(this).promocaoDao()
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            dao.insert(promocao)
 
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@PromocaoActivity, "Promoção salva localmente", Toast.LENGTH_SHORT).show()
+                finish() // ✅ Fecha aqui só depois de salvar certinho
+            }
+        }
+
+        val firebaseRef = FirebaseDatabase.getInstance()
+            .getReference("empresa")
+            .child("7a3118oNdgcpmwSqrgyRTqBnFFx2")
+            .child("promocoes")
+            .child(promocao.id ?: System.currentTimeMillis().toString())
+
+        firebaseRef.setValue(promocao).addOnSuccessListener {
+            Log.d("SALVAR_PROMOCAO", "Promoção salva no Firebase com sucesso!")
+        }.addOnFailureListener { e ->
+            Log.e("SALVAR_PROMOCAO", "Erro ao salvar no Firebase: ${e.message}")
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {

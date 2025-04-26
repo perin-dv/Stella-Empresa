@@ -16,7 +16,7 @@ import com.example.stelladitaliaempresa.data.Converters
 
 @Database(
     entities = [ProdutoEntity::class, PromocaoEntity::class, ConfiguracaoEntity::class],
-    version = 5, // << aumente a versão!
+    version = 7, // << aumente a versão!
     exportSchema = false
 )
 
