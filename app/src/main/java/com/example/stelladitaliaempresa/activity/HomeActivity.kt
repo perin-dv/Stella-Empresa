@@ -14,7 +14,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.stelladitaliaempresa.R
 import com.example.stelladitaliaempresa.databinding.ActivityHomeBinding
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -90,8 +89,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun verificarPedidosPendentes() {
-        val idUsuario = UsuarioFirebase.getIdUsuario()
-        val pedidosRef = FirebaseDatabase.getInstance().getReference("pedidos").child(idUsuario)
+        val idEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2"
+        val pedidosRef = FirebaseDatabase.getInstance()
+            .getReference("pedidos")
+            .child(idEmpresa)
 
         pedidosRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -106,6 +107,7 @@ class HomeActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
 
     private fun atualizarBadge(count: Int) {
         val badge = binding.bottomNavView.getOrCreateBadge(R.id.navigation_Pedidos)

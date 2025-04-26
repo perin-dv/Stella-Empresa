@@ -5,23 +5,29 @@ import android.widget.Toast
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.Entity.ProdutoEntity
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object ExcluirProduto {
+
+    private const val idEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // 🔥 Fixo
+
     fun excluir(context: Context, produto: ProdutoEntity) {
-        val empresaKey = UsuarioFirebase.getIdUsuario()
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
+        val produtoId = produto.id ?: return
 
         FirebaseDatabase.getInstance()
             .getReference("empresa")
-            .child(empresaKey)
+            .child(idEmpresa)
             .child("produtos")
-            .child(produto.categoria ?: "sem_categoria")
-            .child(produto.id ?: "")
+            .child(produtoId)
             .removeValue()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Thread { AppDatabase.getInstance(context).produtoDao().delete(produto) }.start()
+                    // Deleta local no Room usando coroutine
+                    CoroutineScope(Dispatchers.IO).launch {
+                        AppDatabase.getInstance(context).produtoDao().delete(produto)
+                    }
                     Toast.makeText(context, "Produto excluído com sucesso", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Erro ao excluir produto", Toast.LENGTH_SHORT).show()

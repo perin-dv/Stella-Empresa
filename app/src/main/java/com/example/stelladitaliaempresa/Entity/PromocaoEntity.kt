@@ -14,7 +14,7 @@ data class PromocaoEntity(
 
     val observacao: String = "",
 
-    val produtos: List<String> = emptyList(),
+    val produtos: List<String>? = emptyList(),
 
     val imagemBase64: String? = null,
 

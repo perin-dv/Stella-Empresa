@@ -1,13 +1,14 @@
 package com.example.stelladitaliaempresa.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
@@ -16,13 +17,11 @@ import com.example.stelladitaliaempresa.Entity.PromocaoEntity
 import com.example.stelladitaliaempresa.base.BaseActivity
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.databinding.ActivityNovoProdutoActivitiyBinding
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.google.firebase.database.FirebaseDatabase
-import com.example.stelladitaliaempresa.data.AppDatabase as DataBase
-import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 
 class CadastroProdutoActivity : BaseActivity() {
 
@@ -39,7 +38,6 @@ class CadastroProdutoActivity : BaseActivity() {
                     val bitmap = BitmapFactory.decodeStream(inputStream)
                     binding.productImagePreview.setImageBitmap(bitmap)
 
-                    // Converte para base64
                     val outputStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                     val imagemBytes = outputStream.toByteArray()
@@ -47,6 +45,8 @@ class CadastroProdutoActivity : BaseActivity() {
                 }
             }
         }
+
+    private val idUsuarioFirebase = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // UID fixo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,6 @@ class CadastroProdutoActivity : BaseActivity() {
         binding.buttoncadastro.setOnClickListener {
             validarDados()
         }
-
     }
 
     private fun validarDados() {
@@ -71,11 +70,7 @@ class CadastroProdutoActivity : BaseActivity() {
         val preco = binding.editProductPrice.text.toString().toDoubleOrNull()
 
         if (nome.isEmpty() || descricao.isEmpty() || preco == null || imagemBase64 == null) {
-            Toast.makeText(
-                this,
-                "Preencha todos os campos e selecione uma imagem!",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Preencha todos os campos e selecione uma imagem!", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -88,11 +83,6 @@ class CadastroProdutoActivity : BaseActivity() {
         preco: Double,
         imagemBase64: String
     ) {
-        val idUsuarioOriginal = UsuarioFirebase.getIdUsuario()
-        val idUsuarioFirebase = idUsuarioOriginal
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
         val idProduto = System.currentTimeMillis().toString()
 
         val produto = ProdutoEntity(
@@ -101,11 +91,11 @@ class CadastroProdutoActivity : BaseActivity() {
             descricao = descricao,
             preco = preco,
             imagem = imagemBase64,
-            idUsuario = idUsuarioOriginal
+            idUsuario = idUsuarioFirebase
         )
 
         val produtosRef = FirebaseDatabase.getInstance()
-            .getReference("empresa") // 💡 Agora usa o mesmo nó de empresa que promoções
+            .getReference("empresa")
             .child(idUsuarioFirebase)
             .child("produtos")
             .child(idProduto)
@@ -114,61 +104,69 @@ class CadastroProdutoActivity : BaseActivity() {
             if (task.isSuccessful) {
                 Toast.makeText(this, "Produto salvo com sucesso!", Toast.LENGTH_SHORT).show()
                 salvarLocal(produto)
-                finish()
+                perguntarSalvarPromocao(produto)
             } else {
                 Toast.makeText(this, "Erro ao salvar produto!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
     private fun salvarLocal(produto: ProdutoEntity) {
         lifecycleScope.launch {
-            val dao = DataBase.getInstance(applicationContext).produtoDao()
-
-            val entity = ProdutoEntity(
-                idLocal = 0,
-                id = produto.id,
-                nome = produto.nome,
-                descricao = produto.descricao,
-                preco = produto.preco,
-                imagem = produto.imagem,
-                idUsuario = produto.idUsuario
-            )
-
+            val dao = AppDatabase.getInstance(applicationContext).produtoDao()
             withContext(Dispatchers.IO) {
-                dao.insert(entity)
+                dao.insert(produto)
             }
         }
     }
-    private fun salvarPromocao(promocao: PromocaoEntity) {
-        val dao = AppDatabase.getInstance(this).promocaoDao()
 
-        // Salva no Room (corroutine-safe)
-        lifecycleScope.launch(Dispatchers.IO) {
-            dao.insert(promocao)
+    private fun perguntarSalvarPromocao(produto: ProdutoEntity) {
+        AlertDialog.Builder(this)
+            .setTitle("Salvar como promoção?")
+            .setMessage("Deseja também salvar este produto como uma promoção?")
+            .setPositiveButton("Sim") { _, _ -> perguntarDesconto(produto) }
+            .setNegativeButton("Não") { _, _ -> finish() }
+            .setCancelable(false)
+            .show()
+    }
 
-            withContext(Dispatchers.Main) {
-                Toast.makeText(this@CadastroProdutoActivity, "Promoção salva localmente", Toast.LENGTH_SHORT).show()
+    private fun perguntarDesconto(produto: ProdutoEntity) {
+        val input = EditText(this)
+        input.hint = "Digite o valor com desconto"
+
+        AlertDialog.Builder(this)
+            .setTitle("Definir preço promocional")
+            .setView(input)
+            .setPositiveButton("Salvar") { _, _ ->
+                val precoPromocional = input.text.toString().toDoubleOrNull() ?: produto.preco
+                perguntarDestaque(produto, precoPromocional)
             }
-        }
+            .setNegativeButton("Cancelar") { _, _ -> finish() }
+            .setCancelable(false)
+            .show()
+    }
 
-        // Salva no Firebase
-        val idUsuarioOriginal = UsuarioFirebase.getIdUsuario()
-        val idUsuarioFirebase = idUsuarioOriginal
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
+    private fun perguntarDestaque(produto: ProdutoEntity, precoPromocional: Double) {
+        AlertDialog.Builder(this)
+            .setTitle("Destaque da semana?")
+            .setMessage("Quer marcar esta promoção como destaque?")
+            .setPositiveButton("Sim") { _, _ -> salvarPromocao(produto, precoPromocional, true) }
+            .setNegativeButton("Não") { _, _ -> salvarPromocao(produto, precoPromocional, false) }
+            .setCancelable(false)
+            .show()
+    }
 
+    private fun salvarPromocao(produto: ProdutoEntity, precoPromocional: Double, destaque: Boolean) {
         val idPromocao = System.currentTimeMillis().toString()
 
         val promocaoFirebase = PromocaoEntity(
             id = idPromocao,
-            idUsuario = idUsuarioOriginal,
-            titulo = promocao.titulo,
-            observacao = promocao.observacao,
-            valor = promocao.valor,
-            imagemBase64 = promocao.imagemBase64,
-            produtos = promocao.produtos
+            idUsuario = idUsuarioFirebase,
+            titulo = if (destaque) "🌟 ${produto.nome}" else produto.nome ?: "Promoção",
+            observacao = produto.descricao ?: "",
+            valor = precoPromocional,
+            imagemBase64 = produto.imagem,
+            produtos = null // ou uma lista se quiser
         )
 
         val firebaseRef = FirebaseDatabase.getInstance()
@@ -178,10 +176,10 @@ class CadastroProdutoActivity : BaseActivity() {
             .child(idPromocao)
 
         firebaseRef.setValue(promocaoFirebase).addOnSuccessListener {
-            Log.d("SALVAR_PROMOCAO", "Promoção salva no Firebase com sucesso!")
-        }.addOnFailureListener { e ->
-            Log.e("SALVAR_PROMOCAO", "Erro ao salvar no Firebase: ${e.message}")
+            Toast.makeText(this, "Promoção salva com sucesso!", Toast.LENGTH_SHORT).show()
+            finish()
+        }.addOnFailureListener {
+            Toast.makeText(this, "Erro ao salvar promoção", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

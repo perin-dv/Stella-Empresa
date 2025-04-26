@@ -16,7 +16,6 @@ import com.example.stelladitaliaempresa.Entity.ProdutoEntity
 import com.example.stelladitaliaempresa.base.BaseActivity
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.databinding.ActivityPromocaoBinding
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.example.stelladitaliaempresa.imageutil.ImageUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -164,16 +163,12 @@ class PromocaoActivity : BaseActivity() {
         }
 
         // Firebase
-        val idUsuarioOriginal = UsuarioFirebase.getIdUsuario()
-        val idUsuarioFirebase = idUsuarioOriginal
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
-        val idPromocao = System.currentTimeMillis().toString()
+              val idUsuarioFirebase = "7a3118oNdgcpmwSqrgyRTqBnFFx2"
+              val idPromocao = System.currentTimeMillis().toString()
 
         val promocaoFirebase = PromocaoEntity(
             id = idPromocao,
-            idUsuario = idUsuarioOriginal,
+            idUsuario = idUsuarioFirebase,
             titulo = promocao.titulo,
             observacao = promocao.observacao,
             valor = promocao.valor,
@@ -210,7 +205,7 @@ class PromocaoActivity : BaseActivity() {
 
         val promocao = PromocaoEntity(
             id = System.currentTimeMillis().toString(),
-            idUsuario = UsuarioFirebase.getIdUsuario(),
+            idUsuario = FirebaseDatabase.getInstance().toString(),
             titulo = titulo,
             observacao = observacao,
             valor = preco,

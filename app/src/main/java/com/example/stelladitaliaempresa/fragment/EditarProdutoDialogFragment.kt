@@ -14,7 +14,6 @@ import androidx.fragment.app.DialogFragment
 import com.example.stelladitaliaempresa.Entity.ProdutoEntity
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.databinding.DialogEditarProdutoBinding
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.example.stelladitaliaempresa.imageutil.ImageUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.*
@@ -28,6 +27,8 @@ class EditarProdutoDialogFragment(
     private var _binding: DialogEditarProdutoBinding? = null
     private val binding get() = _binding!!
     private var imagemBase64: String? = produto.imagem
+
+    private val idEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // UID fixo da empresa
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditarProdutoBinding.inflate(layoutInflater)
@@ -62,13 +63,13 @@ class EditarProdutoDialogFragment(
     }
 
     private fun setupCategoriaSpinner() {
-        val cats = listOf(
+        val categorias = listOf(
             "Pizza Tradicional", "Pizza Especial", "Pizza Premium",
             "Pizza Vegetariana", "Pizza Doce", "Porções",
             "Combos", "Bebidas", "Bebidas sem álcool"
         )
         val adapter = ArrayAdapter(requireContext(),
-            android.R.layout.simple_dropdown_item_1line, cats)
+            android.R.layout.simple_dropdown_item_1line, categorias)
         binding.spinnerCategoriaDialog.setAdapter(adapter)
         binding.spinnerCategoriaDialog.threshold = 1
         binding.spinnerCategoriaDialog.setOnClickListener {
@@ -103,22 +104,17 @@ class EditarProdutoDialogFragment(
             imagem = imagemBase64
         )
 
-        val empresaKey = UsuarioFirebase.getIdUsuario()
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
         CoroutineScope(Dispatchers.IO).launch {
-            // 1) atualizar local
+            // 1) Atualiza localmente (Room)
             AppDatabase.getInstance(requireContext())
                 .produtoDao()
                 .update(atualizado)
 
-            // 2) atualizar no Firebase em <empresas>/<empresaKey>/produtos/<categoria>/<id>
+            // 2) Atualiza no Firebase em empresa/7a3118oNdgcpmwSqrgyRTqBnFFx2/produtos/idProduto
             FirebaseDatabase.getInstance()
                 .getReference("empresa")
-                .child(empresaKey)
+                .child(idEmpresa)
                 .child("produtos")
-                .child(categoria)
                 .child(atualizado.id ?: "")
                 .setValue(atualizado)
 
@@ -131,21 +127,16 @@ class EditarProdutoDialogFragment(
     }
 
     private fun excluirProduto() {
-        val empresaKey = UsuarioFirebase.getIdUsuario()
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
         CoroutineScope(Dispatchers.IO).launch {
-            // remove de todas as categorias sob “produtos”
+            // Remove no Firebase
             FirebaseDatabase.getInstance()
                 .getReference("empresa")
-                .child(empresaKey)
+                .child(idEmpresa)
                 .child("produtos")
-                .child(produto.categoria ?: "sem_categoria")
                 .child(produto.id ?: "")
                 .removeValue()
 
-            // remove do Room
+            // Remove no Room
             AppDatabase.getInstance(requireContext())
                 .produtoDao()
                 .delete(produto)
@@ -159,8 +150,8 @@ class EditarProdutoDialogFragment(
     }
 
     private fun abrirGaleria() {
-        val i = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(i, 1001)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, 1001)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -169,11 +160,13 @@ class EditarProdutoDialogFragment(
             val uri: Uri? = data.data
             uri?.let {
                 try {
-                    val bmp: Bitmap = MediaStore.Images.Media
+                    val bitmap: Bitmap = MediaStore.Images.Media
                         .getBitmap(requireActivity().contentResolver, it)
-                    binding.imgProdutoDialog.setImageBitmap(bmp)
-                    imagemBase64 = ImageUtils.bitmapToBase64(bmp)
-                } catch (e: IOException) { e.printStackTrace() }
+                    binding.imgProdutoDialog.setImageBitmap(bitmap)
+                    imagemBase64 = ImageUtils.bitmapToBase64(bitmap)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }
         }
     }

@@ -8,53 +8,20 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.Entity.ProdutoEntity
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.example.stelladitaliaempresa.imageutil.ImageUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
 class ProdutoViewModel(application: Application) : AndroidViewModel(application) {
 
     private val produtoDao = AppDatabase.getInstance(application).produtoDao()
 
+    // ID fixo da empresa
+    private val idUsuarioFirebase = "7a3118oNdgcpmwSqrgyRTqBnFFx2"
 
-    // app/src/main/java/com/example/stelladitaliaempresa/viewmodel/ProdutoViewModel.kt
-    class ProdutoViewModel(application: Application) : AndroidViewModel(application) {
-        private val produtoDao = AppDatabase.getInstance(application).produtoDao()
-
-        /** Atualiza no Firebase e, em caso de sucesso, no Room */
-        fun atualizarProdutoFirebaseERoom(
-            produto: ProdutoEntity,
-            onSuccess: () -> Unit,
-            onError: (String) -> Unit
-        ) {
-            val usuarioId = UsuarioFirebase.getIdUsuario()
-            val empresaKey = usuarioId.replace("@", "_at_").replace(".", "_dot_")
-            val cat = produto.categoria ?: "sem_categoria"
-
-            val ref = FirebaseDatabase.getInstance()
-                .getReference("empresa")
-                .child(empresaKey)
-                .child("produtos")
-                .child(cat)
-                .child(produto.id ?: "")
-            ref.setValue(produto).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Atualiza localmente
-                    viewModelScope.launch(Dispatchers.IO) {
-                        produtoDao.update(produto)
-                    }
-                    onSuccess()
-                } else {
-                    onError(task.exception?.message ?: "Erro ao atualizar no Firebase")
-                }
-            }
-        }
-    }
-
+    /** Salvar novo produto no Firebase + Room */
     fun salvarProdutoFirebaseERoom(
         context: Context,
         nome: String,
@@ -65,13 +32,7 @@ class ProdutoViewModel(application: Application) : AndroidViewModel(application)
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        val usuarioId = UsuarioFirebase.getIdUsuario()
-        val empresaKey = usuarioId
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
         try {
-            // converte a imagem para Base64
             val imagemBase64 = uriImagem?.let {
                 context.contentResolver.openInputStream(it)?.use { input ->
                     val bmp = BitmapFactory.decodeStream(input)
@@ -79,12 +40,10 @@ class ProdutoViewModel(application: Application) : AndroidViewModel(application)
                 }
             }
 
-            // gera a referência Firebase
             val referencia = FirebaseDatabase.getInstance()
                 .getReference("empresa")
-                .child(empresaKey)
+                .child(idUsuarioFirebase)
                 .child("produtos")
-                .child(categoria ?: "sem_categoria")
 
             val chaveProduto = referencia.push().key
             if (chaveProduto.isNullOrEmpty()) {
@@ -92,18 +51,16 @@ class ProdutoViewModel(application: Application) : AndroidViewModel(application)
                 return
             }
 
-            // monta a entidade
             val produto = ProdutoEntity(
-                id        = chaveProduto,
-                nome      = nome,
+                id = chaveProduto,
+                nome = nome,
                 descricao = descricao,
-                preco     = preco,
-                imagem    = imagemBase64,
-                idUsuario = usuarioId,
+                preco = preco,
+                imagem = imagemBase64,
+                idUsuario = idUsuarioFirebase,
                 categoria = categoria
             )
 
-            // grava no Firebase
             referencia.child(chaveProduto)
                 .setValue(produto)
                 .addOnCompleteListener { task ->
@@ -112,7 +69,6 @@ class ProdutoViewModel(application: Application) : AndroidViewModel(application)
                         return@addOnCompleteListener
                     }
 
-                    // só depois de ter certeza do Firebase, grava no Room e só então notifica onSuccess
                     viewModelScope.launch(Dispatchers.IO) {
                         produtoDao.insert(produto)
                         withContext(Dispatchers.Main) {
@@ -126,14 +82,38 @@ class ProdutoViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    /** Atualiza um produto já existente no Room (chamado pelo seu diálogo de edição) */
+    /** Atualizar produto já existente no Firebase + Room */
+    fun atualizarProdutoFirebaseERoom(
+        produto: ProdutoEntity,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val referencia = FirebaseDatabase.getInstance()
+            .getReference("empresa")
+            .child(idUsuarioFirebase)
+            .child("produtos")
+            .child(produto.id ?: "")
+
+        referencia.setValue(produto).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    produtoDao.update(produto)
+                }
+                onSuccess()
+            } else {
+                onError(task.exception?.message ?: "Erro ao atualizar no Firebase")
+            }
+        }
+    }
+
+    /** Atualizar um produto apenas no Room local */
     fun atualizarProdutoLocal(produto: ProdutoEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             produtoDao.update(produto)
         }
     }
 
-    /** Insere uma lista completa no Room (útil após um sync) */
+    /** Salvar uma lista completa no Room local */
     fun salvarTodos(lista: List<ProdutoEntity>) {
         viewModelScope.launch(Dispatchers.IO) {
             produtoDao.insertAll(lista)

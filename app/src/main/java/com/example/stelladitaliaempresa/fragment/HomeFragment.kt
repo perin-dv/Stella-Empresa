@@ -12,7 +12,6 @@ import com.example.stelladitaliaempresa.Entity.ProdutoEntity
 import com.example.stelladitaliaempresa.adapter.CardapioAgrupadoAdapter
 import com.example.stelladitaliaempresa.data.AppDatabase
 import com.example.stelladitaliaempresa.databinding.FragmentHomeBinding
-import com.example.stelladitaliaempresa.helper.UsuarioFirebase
 import com.example.stelladitaliaempresa.model.ItemCardapio
 import com.google.firebase.database.*
 import kotlinx.coroutines.Dispatchers
@@ -23,11 +22,12 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // lista em memória de todos os produtos (independente de categoria)
     private val listaProdutos = mutableListOf<ProdutoEntity>()
     private lateinit var adapter: CardapioAgrupadoAdapter
     private lateinit var databaseRef: DatabaseReference
     private lateinit var appDatabase: AppDatabase
+
+    private val idEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // 🔥 UID fixo
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,37 +53,30 @@ class HomeFragment : Fragment() {
                     // mantém função de edição para futuras telas
                 }
             }
-        ) { /* clique no item, se quiser */ }
+        ) {
+            // Clique no item, se quiser
+        }
 
         binding.recyclerCardapio.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerCardapio.adapter = adapter
     }
 
     private fun escutarProdutos() {
-        // monta a chave da empresa (substituindo . e @)
-        val empresaKey = UsuarioFirebase.getIdUsuario()
-            .replace(".", "_dot_")
-            .replace("@", "_at_")
-
-        // usa nó singular "empresa" para _salvar_ e _ler_ produtos
         databaseRef = FirebaseDatabase.getInstance()
             .getReference("empresa")
-            .child(empresaKey)
+            .child(idEmpresa)
             .child("produtos")
 
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listaProdutos.clear()
 
-                // percorre primeiro nível (categorias) e depois produtos dentro de cada categoria
-                for (categoriaSnap in snapshot.children) {
-                    for (produtoSnap in categoriaSnap.children) {
-                        produtoSnap.getValue(ProdutoEntity::class.java)
-                            ?.let { listaProdutos.add(it) }
+                for (produtoSnap in snapshot.children) {
+                    produtoSnap.getValue(ProdutoEntity::class.java)?.let {
+                        listaProdutos.add(it)
                     }
                 }
 
-                // agrupa por categoria para o adapter
                 val listaAgrupada = listaProdutos
                     .groupBy { it.categoria ?: "Outros" }
                     .flatMap { (categoria, produtos) ->
