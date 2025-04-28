@@ -144,7 +144,6 @@ class PromocaoActivity : BaseActivity() {
             .setCancelable(true)
             .show()
     }
-
     private fun salvarPromocaoManual() {
         val titulo = binding.editTituloPromocao.text.toString().trim()
         val observacao = binding.editObservacao.text.toString().trim()
@@ -162,7 +161,14 @@ class PromocaoActivity : BaseActivity() {
             observacao = observacao,
             valor = preco,
             imagemBase64 = imagemBase64!!,
-            produtos = produtosSelecionados.map { it.id ?: UUID.randomUUID().toString() }
+            produtos = produtosSelecionados.map { produtoSelecionado ->
+                ProdutoEntity(
+                    id = produtoSelecionado.id ?: UUID.randomUUID().toString(),
+                    nome = produtoSelecionado.nome ?: "",
+                    preco = produtoSelecionado.preco ?: 0.0,
+                    imagem = produtoSelecionado.imagem ?: ""
+                )
+            }
         )
 
         salvarPromocao(promocao)
