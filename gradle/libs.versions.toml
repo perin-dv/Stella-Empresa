@@ -7,6 +7,7 @@ glide = "4.16.0"
 groupie = "2.10.1"
 groupieKotlinAndroidExtensions = "2.10.1"
 groupieVersion = "2.9.0"
+gson = "2.10.1"
 kotlin = "2.0.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -50,6 +51,7 @@ google-firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-k
 groupie = { module = "com.xwray:groupie", version.ref = "groupie" }
 groupie-kotlin-android-extensions = { module = "com.xwray:groupie-kotlin-android-extensions", version.ref = "groupieKotlinAndroidExtensions" }
 groupie-v290 = { module = "com.xwray:groupie", version.ref = "groupieVersion" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

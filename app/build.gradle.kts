@@ -72,6 +72,7 @@ plugins {
         implementation(libs.androidx.navigation.ui.ktx)
         kapt(libs.androidx.room.compiler)
         implementation(libs.androidx.room.ktx)
+        implementation (libs.gson)
 
 
         // Imagens

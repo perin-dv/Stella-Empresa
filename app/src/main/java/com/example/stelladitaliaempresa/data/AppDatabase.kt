@@ -11,12 +11,12 @@ import com.example.stelladitaliaempresa.Entity.PromocaoEntity
 import com.example.stelladitaliaempresa.dao.ConfiguracaoDAO
 import com.example.stelladitaliaempresa.dao.ProdutoDao
 import com.example.stelladitaliaempresa.dao.PromocaoDao
-import com.example.stelladitaliaempresa.data.Converters
+import com.example.stelladitaliaempresa.util.Converters
 
 
 @Database(
     entities = [ProdutoEntity::class, PromocaoEntity::class, ConfiguracaoEntity::class],
-    version = 7, // << aumente a versão!
+    version = 8, // << aumente a versão!
     exportSchema = false
 )
 

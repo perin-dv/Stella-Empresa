@@ -166,7 +166,8 @@ class CadastroProdutoActivity : BaseActivity() {
             observacao = produto.descricao ?: "",
             valor = precoPromocional,
             imagemBase64 = produto.imagem,
-            produtos = null // ou uma lista se quiser
+            produtos = emptyList()
+
         )
 
         val firebaseRef = FirebaseDatabase.getInstance()
