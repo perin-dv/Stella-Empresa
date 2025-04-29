@@ -22,6 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.view.animation.OvershootInterpolator
+import com.example.apkstelladitalia20.Entity.ProdutoAdicionalEntity
+import com.example.stelladitaliaempresa.Entity.PromocaoFirebaseEntity
 import java.util.UUID
 
 class PromocaoActivity : BaseActivity() {
@@ -30,10 +32,13 @@ class PromocaoActivity : BaseActivity() {
     private var imagemBase64: String? = null
     private val produtosSelecionados = mutableListOf<ProdutoEntity>()
     private val dao by lazy { AppDatabase.getInstance(this).produtoDao() }
+    private lateinit var promocaoViewModel: PromocaoViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPromocaoBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
         binding.txtAnalise.alpha = 0f
@@ -62,6 +67,8 @@ class PromocaoActivity : BaseActivity() {
         binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+
     }
 
     private fun selecionarProdutos() {
@@ -175,29 +182,50 @@ class PromocaoActivity : BaseActivity() {
     }
 
     private fun salvarPromocao(promocao: PromocaoEntity) {
-        val dao = AppDatabase.getInstance(this).promocaoDao()
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            dao.insert(promocao)
-
-            withContext(Dispatchers.Main) {
-                Toast.makeText(this@PromocaoActivity, "Promoção salva localmente", Toast.LENGTH_SHORT).show()
-                finish() // ✅ Fecha aqui só depois de salvar certinho
-            }
+        // 🔹 1. Salvar no Room (como já era)
+        lifecycleScope.launch {
+            promocaoViewModel.salvar(promocao)
         }
 
-        val firebaseRef = FirebaseDatabase.getInstance()
+        // 🔹 2. Montar lista de produtos adicionais com dados completos
+        val produtosAdicionais = promocao.produtos.map {
+            ProdutoAdicionalEntity(
+                id = it.id ?: "",
+                nome = it.nome ?: "",
+                valor = it.preco,
+                imagemBase64 = it.imagem
+            )
+        }
+
+        // 🔹 3. Criar a estrutura para o Firebase
+        val promocaoFirebase = PromocaoFirebaseEntity(
+            id = promocao.id,
+            titulo = promocao.titulo,
+            valor = promocao.valor,
+            observacao = promocao.observacao,
+            imagemBase64 = promocao.imagemBase64,
+            idUsuario = promocao.idUsuario,
+            nomeUsuario = promocao.nomeUsuario,
+            produtos = produtosAdicionais
+        )
+
+        // 🔹 4. Salvar no Firebase
+        val ref = FirebaseDatabase.getInstance()
             .getReference("empresa")
-            .child("7a3118oNdgcpmwSqrgyRTqBnFFx2")
+            .child(promocao.idUsuario)
             .child("promocoes")
-            .child(promocao.id ?: System.currentTimeMillis().toString())
+            .child(promocao.id)
 
-        firebaseRef.setValue(promocao).addOnSuccessListener {
-            Log.d("SALVAR_PROMOCAO", "Promoção salva no Firebase com sucesso!")
-        }.addOnFailureListener { e ->
-            Log.e("SALVAR_PROMOCAO", "Erro ao salvar no Firebase: ${e.message}")
-        }
+        ref.setValue(promocaoFirebase)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Promoção salva com sucesso!", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Erro ao salvar promoção no Firebase", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
