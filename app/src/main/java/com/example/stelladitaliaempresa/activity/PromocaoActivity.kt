@@ -22,9 +22,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.view.animation.OvershootInterpolator
+import androidx.lifecycle.ViewModelProvider
 import com.example.apkstelladitalia20.Entity.ProdutoAdicionalEntity
 import com.example.stelladitaliaempresa.Entity.PromocaoFirebaseEntity
+import com.example.stelladitaliaempresa.viewholder.PromocaoViewModelFactory
+import com.example.stelladitaliaempresa.viewmodel.PromocaoViewModel
 import java.util.UUID
+
+// ... [imports idênticos aos seus]
 
 class PromocaoActivity : BaseActivity() {
 
@@ -34,13 +39,18 @@ class PromocaoActivity : BaseActivity() {
     private val dao by lazy { AppDatabase.getInstance(this).produtoDao() }
     private lateinit var promocaoViewModel: PromocaoViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPromocaoBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
+        // 🔥 Corrige inicialização do ViewModel
+        promocaoViewModel = ViewModelProvider(
+            this,
+            PromocaoViewModelFactory(this)
+        )[PromocaoViewModel::class.java]
+
+        // Configurações iniciais
         binding.txtAnalise.alpha = 0f
         binding.txtAnalise.scaleX = 0.8f
         binding.txtAnalise.scaleY = 0.8f
@@ -67,8 +77,6 @@ class PromocaoActivity : BaseActivity() {
         binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-
-
     }
 
     private fun selecionarProdutos() {
@@ -103,7 +111,6 @@ class PromocaoActivity : BaseActivity() {
 
     private fun atualizarResumoDesconto() {
         val precoPromocao = binding.editValor.text.toString().toDoubleOrNull()
-
         if (produtosSelecionados.isEmpty() || precoPromocao == null) {
             animarAnalise("Selecione produtos para ver o desconto.")
             return
@@ -129,7 +136,6 @@ class PromocaoActivity : BaseActivity() {
             scaleX = 0.8f
             scaleY = 0.8f
             visibility = View.VISIBLE
-
             animate()
                 .alpha(1f)
                 .scaleX(1f)
@@ -151,6 +157,7 @@ class PromocaoActivity : BaseActivity() {
             .setCancelable(true)
             .show()
     }
+
     private fun salvarPromocaoManual() {
         val titulo = binding.editTituloPromocao.text.toString().trim()
         val observacao = binding.editObservacao.text.toString().trim()
@@ -168,12 +175,12 @@ class PromocaoActivity : BaseActivity() {
             observacao = observacao,
             valor = preco,
             imagemBase64 = imagemBase64!!,
-            produtos = produtosSelecionados.map { produtoSelecionado ->
+            produtos = produtosSelecionados.map {
                 ProdutoEntity(
-                    id = produtoSelecionado.id ?: UUID.randomUUID().toString(),
-                    nome = produtoSelecionado.nome ?: "",
-                    preco = produtoSelecionado.preco ?: 0.0,
-                    imagem = produtoSelecionado.imagem ?: ""
+                    id = it.id ?: UUID.randomUUID().toString(),
+                    nome = it.nome ?: "",
+                    preco = it.preco ?: 0.0,
+                    imagem = it.imagem ?: ""
                 )
             }
         )
@@ -182,12 +189,10 @@ class PromocaoActivity : BaseActivity() {
     }
 
     private fun salvarPromocao(promocao: PromocaoEntity) {
-        // 🔹 1. Salvar no Room (como já era)
         lifecycleScope.launch {
             promocaoViewModel.salvar(promocao)
         }
 
-        // 🔹 2. Montar lista de produtos adicionais com dados completos
         val produtosAdicionais = promocao.produtos.map {
             ProdutoAdicionalEntity(
                 id = it.id ?: "",
@@ -197,7 +202,6 @@ class PromocaoActivity : BaseActivity() {
             )
         }
 
-        // 🔹 3. Criar a estrutura para o Firebase
         val promocaoFirebase = PromocaoFirebaseEntity(
             id = promocao.id,
             titulo = promocao.titulo,
@@ -209,7 +213,6 @@ class PromocaoActivity : BaseActivity() {
             produtos = produtosAdicionais
         )
 
-        // 🔹 4. Salvar no Firebase
         val ref = FirebaseDatabase.getInstance()
             .getReference("empresa")
             .child(promocao.idUsuario)
@@ -225,7 +228,6 @@ class PromocaoActivity : BaseActivity() {
                 Toast.makeText(this, "Erro ao salvar promoção no Firebase", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
