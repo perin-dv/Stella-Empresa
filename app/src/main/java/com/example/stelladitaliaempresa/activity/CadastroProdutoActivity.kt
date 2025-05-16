@@ -94,11 +94,15 @@ class CadastroProdutoActivity : BaseActivity() {
             idUsuario = idUsuarioFirebase
         )
 
-        val produtosRef = FirebaseDatabase.getInstance()
+        val ref = FirebaseDatabase.getInstance()
             .getReference("empresa")
             .child(idUsuarioFirebase)
-            .child("produtos")
-            .child(idProduto)
+            .child("categorias")
+            .child(produto.categoria) // ← aqui usa o campo categoria dinamicamente
+            .child(produto.id)
+
+        ref.setValue(produto)
+
 
         produtosRef.setValue(produto).addOnCompleteListener { task ->
             if (task.isSuccessful) {
