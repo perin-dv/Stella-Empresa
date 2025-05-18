@@ -75,6 +75,7 @@ class NovoProdutoActivity : BaseActivity() {
             return
         }
 
+
         produtoViewModel.salvarProdutoFirebaseERoom(
             context     = this,
             nome        = nome,

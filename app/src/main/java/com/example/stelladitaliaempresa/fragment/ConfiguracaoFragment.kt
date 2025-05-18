@@ -3,6 +3,7 @@ package com.example.stelladitaliaempresa.ui.home.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,10 @@ import com.example.stelladitaliaempresa.activity.PromocaoActivity
 import com.example.stelladitaliaempresa.databinding.FragmentConfiguracoesBinding
 import com.example.stelladitaliaempresa.dialog.DialogVendasDia
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ConfiguracaoFragment : Fragment() {
 
@@ -74,42 +78,56 @@ class ConfiguracaoFragment : Fragment() {
         val taxaEntrega = binding.editTaxaEntrega.text.toString()
         val tempoEntrega = binding.editTempoEntrega.text.toString()
 
-        if (idUsuario != null) {
-            val referencia = database.reference.child("empresa").child(idUsuario!!)
+        val idUsuario = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (!idUsuario.isNullOrBlank()) {
+            val referencia = FirebaseDatabase.getInstance()
+                .getReference("empresa")
+                .child(idUsuario)
+                .child("config") // ✅ ESSENCIAL: salvar dentro de "config"
+
             val dados = mapOf(
                 "taxaEntrega" to taxaEntrega,
-                "tempoEntrega" to tempoEntrega,
-
+                "tempoEntrega" to tempoEntrega
             )
 
-            referencia.updateChildren(dados).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Erro ao salvar dados.", Toast.LENGTH_SHORT).show()
+            referencia.updateChildren(dados)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(requireContext(), "Configuração salva com sucesso!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Erro ao salvar", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
         } else {
             Toast.makeText(requireContext(), "Usuário não autenticado", Toast.LENGTH_SHORT).show()
         }
     }
 
+
     private fun recuperarConfiguracoes() {
-        if (idUsuario != null) {
-            val referencia = database.reference.child("empresa").child(idUsuario!!)
-            referencia.get().addOnSuccessListener { snapshot ->
-                val taxaEntrega = snapshot.child("taxaEntrega").value?.toString() ?: ""
-                val tempoEntrega = snapshot.child("tempoEntrega").value?.toString() ?: ""
+        val idUsuario = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        val referencia = FirebaseDatabase.getInstance()
+            .getReference("empresa")
+            .child(idUsuario)
+            .child("config")
 
-                if (view != null && isAdded && _binding != null) {
-                    binding.editTaxaEntrega.setText(taxaEntrega)
-                    binding.editTempoEntrega.setText(tempoEntrega)
+        referencia.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val taxa = snapshot.child("taxaEntrega").value?.toString() ?: ""
+                val tempo = snapshot.child("tempoEntrega").value?.toString() ?: ""
 
-                }
+                binding.editTaxaEntrega.setText(taxa)
+                binding.editTempoEntrega.setText(tempo)
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Empresa", "Erro ao buscar configurações: ${error.message}")
+            }
+        })
     }
+
 
     private fun deslogarUsuario(context: Context) {
         FirebaseAuth.getInstance().signOut()

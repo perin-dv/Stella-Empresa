@@ -84,6 +84,7 @@ class CadastroProdutoActivity : BaseActivity() {
         imagemBase64: String
     ) {
         val idProduto = System.currentTimeMillis().toString()
+        val categoria = binding.spinnerCategoria.text.toString().trim()
 
         val produto = ProdutoEntity(
             id = idProduto,
@@ -91,20 +92,28 @@ class CadastroProdutoActivity : BaseActivity() {
             descricao = descricao,
             preco = preco,
             imagem = imagemBase64,
+            categoria = categoria,
             idUsuario = idUsuarioFirebase
         )
 
-        val ref = FirebaseDatabase.getInstance()
+        // Salvar por categoria (estrutura otimizada)
+        val refPorCategoria = FirebaseDatabase.getInstance()
             .getReference("empresa")
             .child(idUsuarioFirebase)
             .child("categorias")
-            .child(produto.categoria) // ← aqui usa o campo categoria dinamicamente
-            .child(produto.id)
+            .child(categoria)
+            .child(idProduto)
 
-        ref.setValue(produto)
+        refPorCategoria.setValue(produto)
 
+        // Salvar também no caminho antigo (opcional)
+        val refGlobal = FirebaseDatabase.getInstance()
+            .getReference("empresa")
+            .child(idUsuarioFirebase)
+            .child("produtos")
+            .child(idProduto)
 
-        produtosRef.setValue(produto).addOnCompleteListener { task ->
+        refGlobal.setValue(produto).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this, "Produto salvo com sucesso!", Toast.LENGTH_SHORT).show()
                 salvarLocal(produto)
@@ -114,6 +123,7 @@ class CadastroProdutoActivity : BaseActivity() {
             }
         }
     }
+
 
     private fun salvarLocal(produto: ProdutoEntity) {
         lifecycleScope.launch {

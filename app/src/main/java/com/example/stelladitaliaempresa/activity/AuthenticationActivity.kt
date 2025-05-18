@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import com.example.stelladitaliaempresa.R
 import com.example.stelladitaliaempresa.activity.HomeActivity
 import com.example.stelladitaliaempresa.base.BaseActivity
