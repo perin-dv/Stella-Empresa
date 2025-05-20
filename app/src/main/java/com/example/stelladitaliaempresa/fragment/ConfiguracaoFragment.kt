@@ -12,23 +12,18 @@ import androidx.fragment.app.Fragment
 import com.example.apkstelladitalia20.activity.AuthenticationActivity
 import com.example.stelladitaliaempresa.R
 import com.example.stelladitaliaempresa.activity.HistoricoPromocoesActivity
-import com.example.stelladitaliaempresa.activity.PromocaoActivity
 import com.example.stelladitaliaempresa.databinding.FragmentConfiguracoesBinding
 import com.example.stelladitaliaempresa.dialog.DialogVendasDia
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class ConfiguracaoFragment : Fragment() {
 
     private var _binding: FragmentConfiguracoesBinding? = null
-    private val binding get() = _binding ?: throw IllegalStateException("Binding só pode ser acessado entre onCreateView e onDestroyView.")
+    private val binding get() = _binding ?: error("Binding inválido.")
 
-    private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val idUsuario get() = auth.currentUser?.uid
+    private val database = FirebaseDatabase.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,101 +31,117 @@ class ConfiguracaoFragment : Fragment() {
     ): View {
         _binding = FragmentConfiguracoesBinding.inflate(inflater, container, false)
 
-        binding.btnSalvarDados.setOnClickListener {
-            salvarConfiguracoes()
-        }
+        configurarUI()
+        recuperarConfiguracoes()
 
+        return binding.root
+    }
+
+    private fun configurarUI() {
+        binding.btnSalvarDados.setOnClickListener { salvarConfiguracoes() }
         binding.btnPromocoes.setOnClickListener {
-            Toast.makeText(requireContext(), "Ir para Promoções", Toast.LENGTH_SHORT).show()
             startActivity(Intent(requireContext(), HistoricoPromocoesActivity::class.java))
         }
-
-        binding.btnSair.setOnClickListener {
-            deslogarUsuario(requireContext())
-        }
-
+        binding.btnSair.setOnClickListener { deslogarUsuario(requireContext()) }
         binding.btnVerVendas.setOnClickListener {
-            Toast.makeText(requireContext(), "Vendas do dia", Toast.LENGTH_SHORT).show()
-            val dialog = DialogVendasDia(
+            DialogVendasDia(
                 context = requireContext(),
                 totalPedidos = 0,
                 entregues = 0,
                 cancelados = 0,
                 faturamento = 0.0
-            )
-            dialog.show()
+            ).show()
         }
 
-        (binding.toolbar).apply {
+        binding.toolbar.apply {
             title = "Configurações"
             setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
             setNavigationOnClickListener {
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
-
-        recuperarConfiguracoes()
-
-        return binding.root
     }
 
     private fun salvarConfiguracoes() {
-        val taxaEntrega = binding.editTaxaEntrega.text.toString()
-        val tempoEntrega = binding.editTempoEntrega.text.toString()
+        val taxaEntregaStr = binding.editTaxaEntrega.text.toString().trim()
+        val tempoEntregaStr = binding.editTempoEntrega.text.toString().trim()
 
-        val idUsuario = FirebaseAuth.getInstance().currentUser?.uid
+        // 🧠 Pegue o UID correto da empresa usado pelo app cliente
+        val uidEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // <-- valor fixo ou vindo de config
 
-        if (!idUsuario.isNullOrBlank()) {
-            val referencia = FirebaseDatabase.getInstance()
-                .getReference("empresa")
-                .child(idUsuario)
-                .child("config") // ✅ ESSENCIAL: salvar dentro de "config"
+        val taxaEntrega = taxaEntregaStr.toDoubleOrNull()
+        val tempoEntrega = tempoEntregaStr.toIntOrNull()
 
-            val dados = mapOf(
-                "taxaEntrega" to taxaEntrega,
-                "tempoEntrega" to tempoEntrega
-            )
-
-            referencia.updateChildren(dados)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Configuração salva com sucesso!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Erro ao salvar", Toast.LENGTH_SHORT).show()
-                    }
-                }
-        } else {
-            Toast.makeText(requireContext(), "Usuário não autenticado", Toast.LENGTH_SHORT).show()
+        if (taxaEntrega == null || tempoEntrega == null) {
+            Toast.makeText(requireContext(), "Preencha valores válidos", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val dados = mapOf(
+            "taxaEntrega" to taxaEntrega,
+            "tempoEntrega" to tempoEntrega
+        )
+
+        FirebaseDatabase.getInstance()
+            .getReference("empresa")
+            .child(uidEmpresa)
+            .child("config")
+            .setValue(dados)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "Configurações salvas com sucesso!", Toast.LENGTH_SHORT).show()
+                    Log.d("CONFIG_EMPRESA", "✅ Salvo em empresa/$uidEmpresa/config")
+                } else {
+                    Toast.makeText(requireContext(), "Erro ao salvar configurações", Toast.LENGTH_SHORT).show()
+                    Log.e("CONFIG_EMPRESA", "❌ Falha: ${task.exception?.message}")
+                }
+            }
     }
 
 
     private fun recuperarConfiguracoes() {
-        val idUsuario = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val uidEmpresa = "7a3118oNdgcpmwSqrgyRTqBnFFx2" // <- mesmo UID usado para salvar
 
         val referencia = FirebaseDatabase.getInstance()
             .getReference("empresa")
-            .child(idUsuario)
+            .child(uidEmpresa)
             .child("config")
 
         referencia.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val taxa = snapshot.child("taxaEntrega").value?.toString() ?: ""
-                val tempo = snapshot.child("tempoEntrega").value?.toString() ?: ""
+                val rawTaxa = snapshot.child("taxaEntrega").value
+                val rawTempo = snapshot.child("tempoEntrega").value
 
-                binding.editTaxaEntrega.setText(taxa)
-                binding.editTempoEntrega.setText(tempo)
+                val taxaEntrega = when (rawTaxa) {
+                    is Long -> rawTaxa.toString()
+                    is Double -> rawTaxa.toString()
+                    is String -> rawTaxa
+                    else -> ""
+                }
+
+                val tempoEntrega = when (rawTempo) {
+                    is Long -> rawTempo.toString()
+                    is Double -> rawTempo.toInt().toString()
+                    is String -> rawTempo
+                    else -> ""
+                }
+
+                binding.editTaxaEntrega.setText(taxaEntrega)
+                binding.editTempoEntrega.setText(tempoEntrega)
+
+                Log.d("CONFIG_EMPRESA", "✅ Carregado: taxa=$taxaEntrega, tempo=$tempoEntrega")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("Empresa", "Erro ao buscar configurações: ${error.message}")
+                Log.e("CONFIG_EMPRESA", "❌ Erro ao carregar: ${error.message}")
             }
         })
     }
 
 
+
     private fun deslogarUsuario(context: Context) {
-        FirebaseAuth.getInstance().signOut()
+        auth.signOut()
         val intent = Intent(context, AuthenticationActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         context.startActivity(intent)
